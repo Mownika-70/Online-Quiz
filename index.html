@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to bottom, #ffffff, #e6e6fa);
+            color: #4A235A;
+            overflow: hidden;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            font-size: 2em;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 10px;
+            background: #9370DB;
+            color: white;
+        }
+        button:hover {
+            background: #7A5DC7;
+        }
+        .error-message {
+            color: red;
+            font-size: 1em;
+            margin-top: 10px;
+            display: none;
+        }
+        .switch-mode {
+            color: #4A235A;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        .switch-mode:hover {
+            color: #9370DB;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="formTitle">User Login</h1>
+        
+        <div id="signupForm" style="display: none;">
+            <input type="text" id="newUsername" placeholder="Enter Username">
+            <input type="password" id="newPassword" placeholder="Enter Password">
+            <button onclick="signup()">Sign Up</button>
+            <p>Already have an account? <span class="switch-mode" onclick="toggleForm('login')">Login here</span></p>
+        </div>
+
+        <div id="loginForm">
+            <input type="text" id="username" placeholder="Enter Username">
+            <input type="password" id="password" placeholder="Enter Password">
+            <button onclick="login()">Login</button>
+            <p class="error-message" id="errorMessage">Invalid username or password!</p>
+            <p>New user? <span class="switch-mode" onclick="toggleForm('signup')">Sign up here</span></p>
+            <p>Admin?<span class="switch-mode" onclick="toggleForm('admin')"> Admin Login</span></p>
+        </div>
+
+        <div id="adminForm" style="display: none;">
+            <input type="text" id="adminUsername" placeholder="Admin Username">
+            <input type="password" id="adminPassword" placeholder="Admin Password">
+            <button onclick="adminLogin()">Admin Login</button>
+            <p class="error-message" id="adminErrorMessage">Invalid admin credentials!</p>
+            <p><span class="switch-mode" onclick="toggleForm('login')">User? Go to User Login</span></p>
+        </div>
+    </div>
+    
+    <script>
+        function toggleForm(formType) {
+            document.getElementById("signupForm").style.display = (formType === 'signup') ? "block" : "none";
+            document.getElementById("loginForm").style.display = (formType === 'login') ? "block" : "none";
+            document.getElementById("adminForm").style.display = (formType === 'admin') ? "block" : "none";
+            document.getElementById("formTitle").innerText = (formType === 'signup') ? "Sign Up" : 
+                                                             (formType === 'admin') ? "Admin Login" : "User Login";
+        }
+
+        function signup() {
+            let newUsername = document.getElementById("newUsername").value;
+            let newPassword = document.getElementById("newPassword").value;
+            
+            if (newUsername && newPassword) {
+                let users = JSON.parse(localStorage.getItem("users")) || [];
+                users.push({ username: newUsername, password: newPassword });
+                localStorage.setItem("users", JSON.stringify(users));
+                alert("Sign-up successful! Please login.");
+                toggleForm('login');
+            }
+        }
+
+        function login() {
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+            let errorMessage = document.getElementById("errorMessage");
+
+            let storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+            let validUser = storedUsers.find(user => user.username === username && user.password === password);
+            
+            if (validUser) {
+                window.location.href = "quiz.html";
+            } else {
+                showErrorMessage(errorMessage);
+            }
+        }
+
+        function adminLogin() {
+            let adminUsername = document.getElementById("adminUsername").value;
+            let adminPassword = document.getElementById("adminPassword").value;
+            let adminErrorMessage = document.getElementById("adminErrorMessage");
+
+            if (adminUsername === "Mownika" && adminPassword === "mownika@2006") {
+                window.location.href = "admin.html";
+            } else {
+                showErrorMessage(adminErrorMessage);
+            }
+        }
+
+        function showErrorMessage(element) {
+            element.style.display = "block";
+            setTimeout(() => { element.style.display = "none"; }, 3000);
+        }
+    </script>
+</body>
+</html>
